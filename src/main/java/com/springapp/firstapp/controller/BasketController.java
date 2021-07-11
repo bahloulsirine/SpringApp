@@ -1,5 +1,6 @@
 package com.springapp.firstapp.controller;
 
+import com.springapp.firstapp.dto.BasketRequest;
 import com.springapp.firstapp.module.Basket;
 import com.springapp.firstapp.service.BasketService;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,8 @@ import java.util.Optional;
 public class BasketController {
 private final BasketService basketService;
 @PostMapping("")
-    public Basket createBasket(@RequestBody Basket basket){
-    return basketService.createBasket(basket);
+    public Basket createBasket(@RequestBody BasketRequest basketRequest){
+    return basketService.createBasket(basketRequest);
 }
 @DeleteMapping("/{id}")
     public void deleteBasketById(@PathVariable Long id){

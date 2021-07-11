@@ -16,37 +16,37 @@ import java.util.Optional;
 public class SubCategoryController {
     private final SubCategoryService subCategoryService;
 
-    @PostMapping("")
+    @PostMapping("")//valid
     public SubCategory createSubCategory(@RequestBody SubCategory subCategory){
         return subCategoryService.createCategory(subCategory);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         subCategoryService.deleteSubCategoryById(id);
     }
 
-    @PutMapping("")
+    @PutMapping("")//valid
         public SubCategory updateSubCategory (@RequestBody SubCategory subCategory){
         return subCategoryService.updateSubCategory(subCategory);
     }
 
-    @GetMapping("")
+    @GetMapping("")//valid
     public List<SubCategory> getAllSubCategories(){
         return subCategoryService.getAllSubCategory();
     }
 
-    @GetMapping("/{id}")
-    public Optional<SubCategory> getSubCategoryById(Long id){
+    @GetMapping("/{id}")//valid
+    public Optional<SubCategory> getSubCategoryById(@PathVariable Long id){
         return subCategoryService.getSubCategoryById(id);
     }
 
-    @GetMapping("name/{name")
+    @GetMapping("name/{name}")//valid
     public SubCategory getSubCategoryByName(@PathVariable String name){
         return subCategoryService.getSubCategoryByName(name);
     }
 
-    @GetMapping("category/category")
+    @GetMapping("category/{category}")//valid
     public  List<SubCategory> getSubCategoriesByCategory(@PathVariable Category category){
         return subCategoryService.getSubCategoriesByCategory(category);
     }

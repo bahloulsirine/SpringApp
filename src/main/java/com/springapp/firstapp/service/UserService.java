@@ -14,6 +14,8 @@ public class UserService {
     private final UserRepo userRepo;
 
     public User createUser(User user) {
+
+        user.setTotalOrder(0);
         return userRepo.save(user);
     }
 
@@ -30,9 +32,7 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Long id) {
-        return userRepo.findById(id);
-
-    }
+        return userRepo.findById(id);}
 
 
     public List<User> getUsersByLastname(String lastname) {
@@ -47,4 +47,11 @@ public class UserService {
         return userRepo.getUsersByAddress(address);
     }
 
+    public List<User> getUsersByIdIn(List<Long> userIds) {
+        return  userRepo.getUsersByIdIn(userIds);
+    }
+    public List<User> getWonUsers(int orderTotal){
+        List<User> users=userRepo.getUsersByTotalOrderIsGreaterThanEqual(orderTotal);
+        return users;
+    }
 }

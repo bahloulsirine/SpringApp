@@ -26,8 +26,11 @@ public class Article {
     private int price;
 
     @ManyToOne
-    private Category category;
+    private SubCategory subCategory;
+
+    @ManyToMany
+    private List<Article> articles;
 
     @ManyToOne
-    private SubCategory subCategory;
+    private User user;
 }

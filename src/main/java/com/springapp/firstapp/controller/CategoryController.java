@@ -14,28 +14,28 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    @PostMapping("")
+    @PostMapping("")//valid
     public Category createCategory (@RequestBody Category category){
         return categoryService.createCategory(category);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         categoryService.deleteCategoryById(id);
     }
-    @PutMapping("")
+    @PutMapping("")//valid
     public Category updateCategory (@RequestBody Category category){
         return categoryService.updateCategory(category);
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{id}")//valid
     public Optional<Category> getCategoryById(@PathVariable Long id){
         return categoryService.getCategoryById(id);
     }
 
-    @GetMapping("")
+    @GetMapping("")//valid
     public List<Category> getAllCategories(){
         return categoryService.getAllCategory();
     }
-    @GetMapping("name/{name}")
+    @GetMapping("name/{name}")//valid
         public Category getCategoryByName(@PathVariable String name){
         return categoryService.getCategoryByName(name);
     }

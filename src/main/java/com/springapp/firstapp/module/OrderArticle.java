@@ -1,20 +1,24 @@
 package com.springapp.firstapp.module;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class Basket {
+public class OrderArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int pricesSum;
-    @OneToOne
-    private User user;
+    private int amount;
+
+    @ManyToOne
+    private CustomerOrder customerOrder;
+
+    @ManyToOne
+    private Article article;
 }

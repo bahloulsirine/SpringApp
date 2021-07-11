@@ -13,4 +13,7 @@ public interface UserRepo extends JpaRepository<User,Long> {
     List<User>getUsersByAddress(String address);
     User getUserById(Long id);
 
+    List<User> getUsersByIdIn(List<Long> userIds);
+    List<User>getUsersByTotalOrderIsGreaterThanEqual(int orderTotal);
+
 }
