@@ -43,9 +43,7 @@ public class OrderService {
     public void deleteOrderById(Long id){
         orderRepo.deleteById(id);
     }
-    public CustomerOrder updateOrder(CustomerOrder customerOrder){
-        return orderRepo.save(customerOrder);
-    }
+
     public List<CustomerOrder> getAllOrder(){
         return orderRepo.findAll();
     }
@@ -78,6 +76,6 @@ public class OrderService {
         user.setTotalOrder(total+order.getPrice());
         userRepo.save(user);
         order.setState("Accepted");
-        return  updateOrder(order);
+        return  orderRepo.save(order);
     }
 }

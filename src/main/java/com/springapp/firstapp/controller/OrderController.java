@@ -29,11 +29,6 @@ public class OrderController {
         orderService.deleteOrderById(id);
     }
 
-    @PutMapping("")//valid
-    public CustomerOrder updateOrder(@RequestBody CustomerOrder customerOrder) {
-        return orderService.updateOrder(customerOrder);
-    }
-
     @GetMapping("")//valid
     public List<CustomerOrder> getAllOrder() {
         return orderService.getAllOrder();
