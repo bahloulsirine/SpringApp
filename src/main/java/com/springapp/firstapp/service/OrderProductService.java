@@ -16,6 +16,10 @@ public class OrderProductService {
     private final OrderProductRepo orderProductRepo;
     public List<OrderArticle>getOrderArticlesByOrderId(Long id){
          return orderProductRepo.findOrderArticlesByCustomerOrderId(id);
+
+    }
+    public void deleteOrderProduct(Long id){
+        orderProductRepo.deleteOrderArticleById(id);
     }
 }
 

@@ -25,6 +25,7 @@ public class OrderService {
     private final OrderProductRepo orderProductRepo;
     private  final  ArticleService articleService ;
     private final UserRepo userRepo;
+    private final  OrderProductService orderProductService;
 
     public CustomerOrder createOrder(OrderRequest orderRequest){
         CustomerOrder customerOrder  = new CustomerOrder(null,0,orderRequest.getModeOfPayment(),"Waiting",orderRequest.getUser());
@@ -41,7 +42,14 @@ public class OrderService {
     }
 
     public void deleteOrderById(Long id){
-        orderRepo.deleteById(id);
+        CustomerOrder order=getOrderById(id).get();
+        String  state=order.getState();
+       if (state=="Waiting"){
+         List<OrderArticle> orderArticles=orderProductRepo.findOrderArticlesByCustomerOrderId(id);
+         for (OrderArticle orderArticle:orderArticles){
+             orderProductService.deleteOrderProduct(orderArticle.getId());
+         }
+        orderRepo.deleteCustomerOrderById(id);}
     }
 
     public List<CustomerOrder> getAllOrder(){

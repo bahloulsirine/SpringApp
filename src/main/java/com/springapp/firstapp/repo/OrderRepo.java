@@ -13,5 +13,5 @@ public interface OrderRepo extends JpaRepository<CustomerOrder,Long> {
     List<CustomerOrder> getOrdersByModeOfPayment(String modeOfPayment);
     List<CustomerOrder> getOrdersByState(String state);
     List<CustomerOrder>getOrdersByUser(User user);
-
+    void deleteCustomerOrderById(Long id);
 }
