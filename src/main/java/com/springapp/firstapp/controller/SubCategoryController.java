@@ -5,6 +5,7 @@ import com.springapp.firstapp.module.SubCategory;
 import com.springapp.firstapp.service.SubCategoryService;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,17 +16,18 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SubCategoryController {
     private final SubCategoryService subCategoryService;
-
+    @PreAuthorize("has_role(ADMIN)")
     @PostMapping("")//valid
     public SubCategory createSubCategory(@RequestBody SubCategory subCategory){
         return subCategoryService.createCategory(subCategory);
     }
-
+    @PreAuthorize("has_role(ADMIN)")
     @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         subCategoryService.deleteSubCategoryById(id);
     }
 
+    @PreAuthorize("has_role(ADMIN)")
     @PutMapping("")//valid
         public SubCategory updateSubCategory (@RequestBody SubCategory subCategory){
         return subCategoryService.updateSubCategory(subCategory);

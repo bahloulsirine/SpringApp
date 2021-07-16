@@ -2,6 +2,7 @@ package com.springapp.firstapp.repo;
 
 import com.springapp.firstapp.module.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -29,4 +30,8 @@ public interface ArticleRepo extends JpaRepository<Article,Long> {
     @Query(value = "SELECT DISTINCT user_id FROM article WHERE stock < ?1 ", nativeQuery = true)
     List<Long> getUserIdInsufficientStock(int stoke);
 
+
+    @Modifying
+    @Query(value = "DELETE FROM `article_articles` WHERE articles_id IN (?1)",nativeQuery = true)
+    void deleteRecommendations(List<Long> articlesIds);
 }

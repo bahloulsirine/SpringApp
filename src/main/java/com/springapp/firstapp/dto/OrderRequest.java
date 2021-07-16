@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderRequest {
     private String modeOfPayment;
-    private User user;
     List<OrderItemRequest> orderItems ;
 
 

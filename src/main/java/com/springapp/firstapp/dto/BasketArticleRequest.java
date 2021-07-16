@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BasketArticleRequest{
-    private Long BasketArticleId ;
+    private Long basketArticleId ;
     private int amount;
 }

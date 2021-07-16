@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BasketRequest {
-  private User user ;
+
   List<OrderItemRequest> orderItems;
 }

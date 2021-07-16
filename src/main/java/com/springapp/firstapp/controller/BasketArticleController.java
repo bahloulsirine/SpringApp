@@ -14,15 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 public class BasketArticleController {
     private  final BasketArticleService basketArticleService;
-    @GetMapping("/{id}")
+    @GetMapping("/{id}")//valid
     public List<BasketArticle> getArticlesByBasketId(@PathVariable Long id){
         return basketArticleService.getArticlesByBasketId(id);
     }
-    @PutMapping("")
+    @PutMapping("")//valid
     public BasketArticle updateBasketArticle(@RequestBody BasketArticleRequest basketArticleRequest){
         return basketArticleService.update(basketArticleRequest);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")//valid
     public void deleteBasketArticle(@PathVariable Long id){
         basketArticleService.deleteBasketArticle(id);
     }

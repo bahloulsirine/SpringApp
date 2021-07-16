@@ -27,8 +27,8 @@ public class OrderService {
     private final UserRepo userRepo;
     private final  OrderProductService orderProductService;
 
-    public CustomerOrder createOrder(OrderRequest orderRequest){
-        CustomerOrder customerOrder  = new CustomerOrder(null,0,orderRequest.getModeOfPayment(),"Waiting",orderRequest.getUser());
+    public CustomerOrder createOrder(OrderRequest orderRequest,User user){
+        CustomerOrder customerOrder  = new CustomerOrder(null,0,orderRequest.getModeOfPayment(),"Waiting",user);
         customerOrder  = orderRepo.save(customerOrder);
         int price  = 0 ;
         for(OrderItemRequest orderItem : orderRequest.getOrderItems()){
@@ -40,19 +40,15 @@ public class OrderService {
         customerOrder.setPrice(price);
         return orderRepo.save(customerOrder);
     }
-
     public void deleteOrderById(Long id){
         CustomerOrder order=getOrderById(id).get();
         String  state=order.getState();
-       if (state=="Waiting"){
-         List<OrderArticle> orderArticles=orderProductRepo.findOrderArticlesByCustomerOrderId(id);
-         for (OrderArticle orderArticle:orderArticles){
-             orderProductService.deleteOrderProduct(orderArticle.getId());
-         }
-        orderRepo.deleteCustomerOrderById(id);}
+       if (state.equals("Waiting")){
+           orderProductRepo.deleteOrderArticlesByCustomerOrderId(id);
+           orderRepo.deleteCustomerOrderById(id);}
     }
 
-    public List<CustomerOrder> getAllOrder(){
+    public List<CustomerOrder> getAllOrders(){
         return orderRepo.findAll();
     }
     public Optional<CustomerOrder> getOrderById(Long id){
@@ -64,8 +60,8 @@ public class OrderService {
     public  List<CustomerOrder>getOrdersByModeOfPayment(String modeOfPayment){
         return orderRepo.getOrdersByModeOfPayment(modeOfPayment);
     }
-    public List<CustomerOrder> getOrdersByUser(User user){
-        return orderRepo.getOrdersByUser(user);
+    public List<CustomerOrder> getOrdersByUserId(Long id){
+        return orderRepo.getOrdersByUserId(id);
     }
 
     public CustomerOrder ValidateOrder(Long id){

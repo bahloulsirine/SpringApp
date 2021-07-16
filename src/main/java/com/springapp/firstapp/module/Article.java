@@ -1,5 +1,6 @@
 package com.springapp.firstapp.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Article {
     private SubCategory subCategory;
 
     @ManyToMany
+    @JsonIgnore
     private List<Article> articles;
 
     @ManyToOne

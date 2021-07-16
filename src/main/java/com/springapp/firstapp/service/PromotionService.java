@@ -1,11 +1,13 @@
 package com.springapp.firstapp.service;
 
+import com.springapp.firstapp.dto.PromotionRequest;
 import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Promotion;
 import com.springapp.firstapp.repo.PromotionRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class PromotionService {
         return promotions;
     }
     public List<Promotion>createPromotionArticles(List<Article> articles, Integer percentage){
-        List<Promotion> promotions=null;
+        List<Promotion> promotions=new ArrayList<>();
         for (Article article:articles){
             Promotion promotion=new Promotion(null,percentage,null,article);
             promotionRepo.save(promotion);
@@ -35,10 +37,11 @@ public class PromotionService {
         promotionRepo.deletePromotionsByPercentagePromotion(promotion);
     }
 
-    public  List<Promotion> createPromotionFlush(Date date, int percentage, List<Article> articles){
-        List<Promotion> promotions=null;
-        for (Article article:articles){
-            Promotion promotion=new Promotion(null,percentage,date,article);
+    public  List<Promotion> createPromotionFlush(PromotionRequest promotionRequest){
+        List<Promotion> promotions=new ArrayList<>();
+
+        for (Article article:promotionRequest.getArticles()){
+            Promotion promotion=new Promotion(null,promotionRequest.getPercentage(),promotionRequest.getExpirationDate(),article);
             promotionRepo.save(promotion);
             promotions.add(promotion);
         }

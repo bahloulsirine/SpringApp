@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -62,14 +63,14 @@ public class ArticleService {
         article1.setArticles(list);
         articleRepo.save(article1);
         return list;}
-    public List<Article> deleteArticleRecommendation(List<Article> articles, Long id){
+    public void deleteArticleRecommendation(List<Article> articles, Long id){
         Article article1=getArticleById(id).get();
-        List<Article> list=getRecommendationsById(id);
+        List<Long>articlesIds=new ArrayList<>();
         for (Article article:articles){
-            list.remove(article);}
-        article1.setArticles(list);
-        articleRepo.save(article1);
-        return list;
+           articlesIds.add(article.getId());
+            }
+        articleRepo.deleteRecommendations(articlesIds);
+
     }
     public List<Article> getInsufficientStockArticles(int stock){ return articleRepo.getArticlesByStockLessThan(stock);}
     public List<Article>getInsufficientStockArticlesByProvider(User user,int stock){

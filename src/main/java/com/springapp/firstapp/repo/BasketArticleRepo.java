@@ -16,4 +16,5 @@ public interface BasketArticleRepo extends JpaRepository<BasketArticle,Long> {
     @Override
     Optional<BasketArticle> findById(Long id);
     void deleteBasketArticleById(Long id);
+    void deleteBasketArticlesByBasketId(Long id);
 }

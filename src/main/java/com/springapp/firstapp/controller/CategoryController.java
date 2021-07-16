@@ -3,6 +3,7 @@ package com.springapp.firstapp.controller;
 import com.springapp.firstapp.module.Category;
 import com.springapp.firstapp.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,18 +15,24 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+    @PreAuthorize("has_role(ADMIN)")
     @PostMapping("")//valid
     public Category createCategory (@RequestBody Category category){
         return categoryService.createCategory(category);
     }
+
+    @PreAuthorize("has_role(ADMIN)")
     @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         categoryService.deleteCategoryById(id);
     }
+
+    @PreAuthorize("has_role(ADMIN)")
     @PutMapping("")//valid
     public Category updateCategory (@RequestBody Category category){
         return categoryService.updateCategory(category);
     }
+
     @GetMapping("/{id}")//valid
     public Optional<Category> getCategoryById(@PathVariable Long id){
         return categoryService.getCategoryById(id);

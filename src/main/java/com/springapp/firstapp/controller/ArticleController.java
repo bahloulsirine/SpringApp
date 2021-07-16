@@ -3,9 +3,12 @@ package com.springapp.firstapp.controller;
 import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Promotion;
 import com.springapp.firstapp.module.User;
+import com.springapp.firstapp.repo.UserRepo;
 import com.springapp.firstapp.service.ArticleService;
 import com.springapp.firstapp.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -19,19 +22,24 @@ import java.util.Optional;
 @Transactional
 public class ArticleController {
 private final ArticleService articleService;
-private final UserService userService;
+//private final UserService userService;
+private final UserRepo userRepo;
+
 
     @GetMapping("")//valid
     public List<Article> getAllArticles (){return articleService.getAllArticles();}
 
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
     @PostMapping("")//valid
     public Article createArticle(@RequestBody Article article){return articleService.createArticle(article);}
 
+    @PreAuthorize("has_role(ADMIN)")
     @DeleteMapping("/{id}")//valid
     public void deleteArticle(@PathVariable Long id){
         articleService.deleteArticleById(id);
     }
 
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
     @PutMapping("")//valid
     public Article updateArticle(@RequestBody Article article){
         return articleService.updateArticle(article);
@@ -41,8 +49,6 @@ private final UserService userService;
     public Optional<Article> getArticleById(@PathVariable Long id){
         return articleService.getArticleById(id);
     }
-
-
 
     @GetMapping("bySubcategory/{id}")//valid
     public List<Article> getArticlesBySubcategoryId(@PathVariable Long id){
@@ -69,29 +75,36 @@ private final UserService userService;
     public List<Article>getArticlesRecommendationById(@PathVariable Long id){
         return articleService.getRecommendationsById(id);
     }
-    @PostMapping("updateRecommendation/{id}")
-    public List<Article>setArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    @PutMapping("addRecommendation/{id}")//valid
+    public List<Article>addArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
         return articleService.addArticleRecommendation(articles,id);
     }
-
-    @PostMapping("deleteRecommendation/{id}")
-    public List<Article>deleteArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
-        return articleService.deleteArticleRecommendation(articles,id);
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    @DeleteMapping("deleteRecommendation/{id}")
+    public void deleteArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
+       articleService.deleteArticleRecommendation(articles,id);
     }
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
     @GetMapping("insufficient/{stock}")//valid
     public List<Article> getInsufficientStockArticles(@PathVariable int stock){
         return articleService.getInsufficientStockArticles(stock);
     }
-   @GetMapping("user/{id}")//valid
-   public List<Article>getArticlesByUserId(@PathVariable Long id){
-        return articleService.getArticlesByUserId(id);
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+   @GetMapping("/ArticleByUser")//valid
+   public List<Article>getArticlesByUserId(){
+       String mail  = SecurityContextHolder.getContext().getAuthentication().getName();
+       User user=userRepo.getUserByEmail(mail);
+        return articleService.getArticlesByUserId(user.getId());
    }
-    @GetMapping("insufficientByUser/{id}/{stock}")//valid
-    public  List<Article>getInsufficientArticlesByUser(@PathVariable Long id, @PathVariable int stock){
-        User user=userService.getUserById(id).get();
+    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    @GetMapping("insufficientByUser/{stock}")//valid
+    public  List<Article>getInsufficientArticlesByUser(@PathVariable int stock){
+        String mail  = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user=userRepo.getUserByEmail(mail);
         return  articleService.getInsufficientStockArticlesByProvider(user,stock);
     }
-
+    @PreAuthorize("has_roles(ADMIN)")
     @GetMapping("userInsufficientStock/{stock}")//valid
     public List<User> getUsersInsufficientStock(@PathVariable int stock){
         return articleService.getUsersStockInsufficient(stock);

@@ -9,10 +9,12 @@ import com.springapp.firstapp.repo.BasketArticleRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class BasketArticleService {
     private final BasketArticleRepo basketArticleRepo;
     private  final BasketService basketService;

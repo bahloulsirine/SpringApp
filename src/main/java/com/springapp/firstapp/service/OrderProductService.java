@@ -1,6 +1,6 @@
 package com.springapp.firstapp.service;
 
-import com.springapp.firstapp.module.OrderArticle;
+import com.springapp.firstapp.module.*;
 import com.springapp.firstapp.repo.OrderProductRepo;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,8 +18,6 @@ public class OrderProductService {
          return orderProductRepo.findOrderArticlesByCustomerOrderId(id);
 
     }
-    public void deleteOrderProduct(Long id){
-        orderProductRepo.deleteOrderArticleById(id);
-    }
+
 }
 
