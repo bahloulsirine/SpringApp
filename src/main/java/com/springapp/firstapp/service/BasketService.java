@@ -24,7 +24,11 @@ public class BasketService {
     }
     public void deleteBasket(Long id){
         basketArticleRepo.deleteBasketArticlesByBasketId(id);
-        basketRepo.deleteById(id);
+        Basket basket=basketRepo.findById(id).get();
+        basket.setPricesSum(0);
+        System.out.println("**********************************");
+        System.out.println(basket.getPricesSum());
+        basketRepo.save(basket);
     }
 
     public Basket createBasket(BasketRequest basketRequest,User user){
@@ -44,12 +48,6 @@ public class BasketService {
             price+=orderItemRequest.getAmount()*article.getPrice();
             basketArticleRepo.save(basketArticle); }
         return price;}
-    public Optional<Basket> getBasketById(Long id){
-        return basketRepo.findById(id);
-    }
-    public List<Basket> getAllBasket(){
-        return basketRepo.findAll();
-  }
     public Basket getBasketByUser(User user){
         return basketRepo.findBasketByUser(user);
     }

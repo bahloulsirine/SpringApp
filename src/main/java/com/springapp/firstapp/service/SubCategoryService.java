@@ -1,7 +1,9 @@
 package com.springapp.firstapp.service;
 
+import com.springapp.firstapp.dto.SubcategoryCreateRequest;
 import com.springapp.firstapp.module.Category;
 import com.springapp.firstapp.module.SubCategory;
+import com.springapp.firstapp.repo.CategoryRepo;
 import com.springapp.firstapp.repo.SubCategoryRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SubCategoryService {
     private final SubCategoryRepo subCategoryRepo;
+    private final CategoryService categoryService;
 
-    public SubCategory createCategory(SubCategory subCategory) {
-        return subCategoryRepo.save(subCategory);
+    public SubCategory createSubcategory(SubcategoryCreateRequest subCategory) {
+        Category category=categoryService.getCategoryById(subCategory.getCategoryId()).get();
+        SubCategory subCategory1=new SubCategory(null,subCategory.getName(),category);
+        return subCategoryRepo.save(subCategory1);
     }
 
     public void deleteSubCategoryById(Long id) {

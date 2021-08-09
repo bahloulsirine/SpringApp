@@ -14,6 +14,6 @@ import java.util.List;
 public class PromotionRequest {
     private Date expirationDate;
     private  int percentage;
-    private List<Article> articles;
+    private List<Long> articlesIds;
 
 }

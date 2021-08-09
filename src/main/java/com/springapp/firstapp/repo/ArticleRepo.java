@@ -16,6 +16,8 @@ public interface ArticleRepo extends JpaRepository<Article,Long> {
     List<Article> getArticlesByColor(String color);
 
     Article getArticleByCode(Long code);
+    List<Article>getArticlesByName(String name);
+    Article getArticleByUrl(String url);
 
     List<Article> getArticlesByPrice(int price);
 
@@ -26,12 +28,13 @@ public interface ArticleRepo extends JpaRepository<Article,Long> {
 
     List<Article> getArticlesByStockLessThanAndUser(int stock, User user);
     List<Article>getArticlesByUserId(Long id);
+    List<Article> getArticlesByIdIn(List<Long> ids);
 
     @Query(value = "SELECT DISTINCT user_id FROM article WHERE stock < ?1 ", nativeQuery = true)
     List<Long> getUserIdInsufficientStock(int stoke);
 
 
     @Modifying
-    @Query(value = "DELETE FROM `article_articles` WHERE articles_id IN (?1)",nativeQuery = true)
-    void deleteRecommendations(List<Long> articlesIds);
+    @Query(value = "DELETE FROM `article_articles` WHERE article_id = ?1 AND articles_id =?2  ",nativeQuery = true)
+    void deleteRecommendations(Long articleId,Long recommendationId);
 }

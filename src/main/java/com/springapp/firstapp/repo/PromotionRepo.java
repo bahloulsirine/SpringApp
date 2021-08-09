@@ -9,9 +9,7 @@ import java.util.List;
 
 @Repository
 public interface PromotionRepo extends JpaRepository<Promotion,Long> {
-    List<Promotion> getPromotionsByPercentagePromotion(int percentage);
-    void deletePromotionsByPercentagePromotion(int percentage);
-    List<Promotion>getPromotionsByPromotionExpirationAfter(Date date);
-    void deletePromotionsByPromotionExpirationBefore(Date date);
+    Promotion getPromotionByPercentagePromotion(int percentage);
+    void deletePromotionByPercentagePromotion(int percentage);
 
 }

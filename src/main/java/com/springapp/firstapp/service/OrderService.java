@@ -2,10 +2,7 @@ package com.springapp.firstapp.service;
 
 import com.springapp.firstapp.dto.OrderItemRequest;
 import com.springapp.firstapp.dto.OrderRequest;
-import com.springapp.firstapp.module.Article;
-import com.springapp.firstapp.module.CustomerOrder;
-import com.springapp.firstapp.module.OrderArticle;
-import com.springapp.firstapp.module.User;
+import com.springapp.firstapp.module.*;
 import com.springapp.firstapp.repo.OrderProductRepo;
 import com.springapp.firstapp.repo.OrderRepo;
 import com.springapp.firstapp.repo.UserRepo;
@@ -14,6 +11,8 @@ import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,26 +25,52 @@ public class OrderService {
     private  final  ArticleService articleService ;
     private final UserRepo userRepo;
     private final  OrderProductService orderProductService;
+    private final BasketService basketService;
+    private final BasketArticleService basketArticleService;
 
-    public CustomerOrder createOrder(OrderRequest orderRequest,User user){
-        CustomerOrder customerOrder  = new CustomerOrder(null,0,orderRequest.getModeOfPayment(),"Waiting",user);
-        customerOrder  = orderRepo.save(customerOrder);
-        int price  = 0 ;
-        for(OrderItemRequest orderItem : orderRequest.getOrderItems()){
-            OrderArticle orderArticle = new OrderArticle(null,orderItem.getAmount(),customerOrder,orderItem.getArticle());
-            Article article = articleService.getArticleById(orderArticle.getArticle().getId()).get();
-            price += article.getPrice() * orderItem.getAmount();
-            orderProductRepo.save(orderArticle);
-        }
-        customerOrder.setPrice(price);
-        return orderRepo.save(customerOrder);
+//    public CustomerOrder createOrder(OrderRequest orderRequest,User user){
+//
+//        CustomerOrder customerOrder  = new CustomerOrder(null,0,orderRequest.getModeOfPayment(),"Waiting",user);
+//        customerOrder  = orderRepo.save(customerOrder);
+//        int price  = 0 ;
+//        for(OrderItemRequest orderItem : orderRequest.getOrderItems()){
+//            OrderArticle orderArticle = new OrderArticle(null,orderItem.getAmount(),customerOrder,orderItem.getArticle());
+//            Article article = articleService.getArticleById(orderArticle.getArticle().getId()).get();
+//            price += article.getPrice() * orderItem.getAmount();
+//            orderProductRepo.save(orderArticle);
+//        }
+//        customerOrder.setPrice(price);
+//        return orderRepo.save(customerOrder);
+//    }
+public CustomerOrder createOrder(String modeOfPayment,User user){
+    List<OrderItemRequest> orderItems = new ArrayList<>();
+    Basket basket= basketService.getBasketByUser(user);
+    List<BasketArticle> basketArticles=basketArticleService.getBasketArticlesByBasketId(basket.getId());
+    for(BasketArticle basketArticle:basketArticles){
+        OrderItemRequest orderItemRequest=new OrderItemRequest(basketArticle.getAmount(),basketArticle.getArticle());
+        orderItems.add(orderItemRequest);
     }
-    public void deleteOrderById(Long id){
+    CustomerOrder customerOrder  = new CustomerOrder(null,0,modeOfPayment,"Waiting",user);
+    customerOrder  = orderRepo.save(customerOrder);
+    int price  = 0 ;
+    for(OrderItemRequest orderItem : orderItems){
+        OrderArticle orderArticle = new OrderArticle(null,orderItem.getAmount(),customerOrder,orderItem.getArticle());
+        Article article = articleService.getArticleById(orderArticle.getArticle().getId()).get();
+        price += article.getPrice() * orderItem.getAmount();
+        orderProductRepo.save(orderArticle);
+    }
+    customerOrder.setPrice(price);
+    basketService.deleteBasket(basket.getId());
+    return orderRepo.save(customerOrder);
+}
+    public void deleteOrderById(Long id,User user){
+        List<CustomerOrder> orders=getOrdersByUserId(user.getId());
         CustomerOrder order=getOrderById(id).get();
+        if (orders.contains(order)){
         String  state=order.getState();
        if (state.equals("Waiting")){
            orderProductRepo.deleteOrderArticlesByCustomerOrderId(id);
-           orderRepo.deleteCustomerOrderById(id);}
+           orderRepo.deleteCustomerOrderById(id);}}
     }
 
     public List<CustomerOrder> getAllOrders(){
@@ -80,6 +105,12 @@ public class OrderService {
         user.setTotalOrder(total+order.getPrice());
         userRepo.save(user);
         order.setState("Accepted");
+        return  orderRepo.save(order);
+    }
+
+    public CustomerOrder RefuseOrder(Long id) {
+        CustomerOrder order=getOrderById(id).orElseThrow();
+        order.setState("Refused");
         return  orderRepo.save(order);
     }
 }

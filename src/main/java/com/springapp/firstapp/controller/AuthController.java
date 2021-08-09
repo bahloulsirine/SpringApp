@@ -8,18 +8,17 @@ import com.springapp.firstapp.models.AuthenticationResponse;
 import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 @RequestMapping("api/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
@@ -28,7 +27,7 @@ public class AuthController {
     private  final JwtUtil jwtTokenUtil;
 
     @PostMapping("/authentication")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)throws Exception{
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)throws Exception{
         try { authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(),authenticationRequest.getPassword())
         );
@@ -38,11 +37,13 @@ public class AuthController {
         final UserDetails userDetails= userDetailsService
                 .loadUserByUsername(authenticationRequest.getUserName());
         final String jwt=jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return new  ResponseEntity<>(new AuthenticationResponse(jwt,userDetails), HttpStatus.OK);
     }
 
     @PostMapping("/signup")
     public User signUp(@RequestBody UserSignupRequest userSignupRequest){
         return  userService.createUser(userSignupRequest);
     }
+
+
 }

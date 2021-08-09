@@ -1,23 +1,19 @@
 package com.springapp.firstapp.controller;
-
-import com.springapp.firstapp.dto.PromotionRequest;
 import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Promotion;
-import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.service.PromotionService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/promotion")
 @AllArgsConstructor
 @Transactional
+@CrossOrigin (origins = "*",allowedHeaders = "*")
+
 public class PromotionController {
     private final PromotionService promotionService;
 
@@ -26,34 +22,38 @@ public class PromotionController {
         return promotionService.getAllPromotionArticles();
     }
     @GetMapping("promotionPercentage/{percentage}")//valid
-    public List<Promotion> getPromotionArticles(@PathVariable int percentage){
+    public List<Article> getPromotionArticles(@PathVariable int percentage){
         return promotionService.getPromotionArticles(percentage);
     }
 
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
     @PostMapping("/{promotionPercentage}")//valid
-    public List<Promotion>createPromotionArticles(@PathVariable int promotionPercentage,@RequestBody List<Article>articles){
-        return promotionService.createPromotionArticles(articles,promotionPercentage);
+    public Promotion createPromotionArticles(@PathVariable int promotionPercentage,@RequestBody List<Long> articleIds){
+
+        return promotionService.createPromotionArticles(articleIds,promotionPercentage);
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-    @DeleteMapping("deletePromotion/{promotionPercentage}") //valid
-    public void deletePromotionArticles(@PathVariable int promotionPercentage){
-       promotionService.deletePromotionArticles(promotionPercentage);
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @PutMapping("/addPromotion/{promotionPercentage}")//valid
+    public Promotion addPromotionArticles(@PathVariable int promotionPercentage,@RequestBody List<Long> articleIds){
+
+        return promotionService.addPromotionArticles(articleIds,promotionPercentage);
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-    @PostMapping("/createPromotionFlush")//invalid
-    public List<Promotion> createPromotionFlush(@RequestBody PromotionRequest promotionRequest){
-        return promotionService.createPromotionFlush(promotionRequest);
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @DeleteMapping ("/deletePromotionArticle/{id}/{percentage}")
+    public void deletePromotionArticles(@PathVariable Long id,@PathVariable int percentage){
+        promotionService.deletePromotionArticle(id,percentage);
+    }
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @DeleteMapping("deletePromotionByPercentage/{promotionPercentage}") //valid
+    public void deletePromotionByPercentage(@PathVariable int promotionPercentage){
+       promotionService.deletePromotionArticlesByPercentage(promotionPercentage);
+    }
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @DeleteMapping("deletePromotionById/{id}") //valid
+    public void deletePromotion(@PathVariable Long id){
+        promotionService.deletePromotion(id);
     }
 
-    @GetMapping("/PromotionFlush")//valid
-    public List<Promotion> getPromotionFlush(){
-        return promotionService.getPromotionFlush();
-    }
 
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-    @DeleteMapping("/deletePromotionFlush")//valid
-    public void deletePromotionFlush(){
-        promotionService.deletePromotionFlush();
-    }
+
 }

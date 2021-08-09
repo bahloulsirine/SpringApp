@@ -6,6 +6,7 @@ import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Basket;
 import com.springapp.firstapp.module.BasketArticle;
 import com.springapp.firstapp.repo.BasketArticleRepo;
+import com.springapp.firstapp.repo.BasketRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class BasketArticleService {
     private final BasketArticleRepo basketArticleRepo;
     private  final BasketService basketService;
+    private final BasketRepo basketRepo;
     private  final ArticleService articleService;
     public List<BasketArticle> getArticlesByBasketId(Long id){
         return
@@ -27,7 +29,7 @@ public class BasketArticleService {
     public BasketArticle update(BasketArticleRequest basketArticleRequest) {
         BasketArticle basketArticle=basketArticleRepo.findById(basketArticleRequest.getBasketArticleId()).get();
         Long basketId=basketArticle.getBasket().getId();
-        Basket basket=basketService.getBasketById(basketId).get();
+        Basket basket=basketRepo.findById(basketId).get();
         basketArticle.setAmount(basketArticleRequest.getAmount());
 
         List<BasketArticle> basketArticles=getArticlesByBasketId(basketId);
@@ -49,10 +51,13 @@ public class BasketArticleService {
     public void deleteBasketArticle(Long id) {
         BasketArticle basketArticle=basketArticleRepo.findById(id).get();
         Long basketId=basketArticle.getBasket().getId();
-        Basket basket=basketService.getBasketById(basketId).get();
+        Basket basket=basketRepo.findById(basketId).get();
         basketArticleRepo.deleteBasketArticleById(id);
         List<BasketArticle> basketArticles=getArticlesByBasketId(basketId);
         basket.setPricesSum(getPrice(basketArticles));
         basketService.updateBasket(basket);
+    }
+    public List<BasketArticle>getBasketArticlesByBasketId(Long id){
+        return basketArticleRepo.getBasketArticlesByBasketId(id);
     }
 }

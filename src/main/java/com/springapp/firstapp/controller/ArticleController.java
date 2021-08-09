@@ -1,18 +1,20 @@
 package com.springapp.firstapp.controller;
 
+import com.springapp.firstapp.dto.ArticleCreateRequest;
+import com.springapp.firstapp.dto.ArticleUpdateRequest;
+import com.springapp.firstapp.dto.DeleteRecommendationRequest;
 import com.springapp.firstapp.module.Article;
-import com.springapp.firstapp.module.Promotion;
+import com.springapp.firstapp.module.SubCategory;
 import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.repo.UserRepo;
 import com.springapp.firstapp.service.ArticleService;
-import com.springapp.firstapp.service.UserService;
+import com.springapp.firstapp.service.SubCategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,29 +22,29 @@ import java.util.Optional;
 @RequestMapping("api/article")
 @AllArgsConstructor
 @Transactional
+@CrossOrigin (origins = "*",allowedHeaders = "*")
 public class ArticleController {
 private final ArticleService articleService;
-//private final UserService userService;
 private final UserRepo userRepo;
-
 
     @GetMapping("")//valid
     public List<Article> getAllArticles (){return articleService.getAllArticles();}
 
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
     @PostMapping("")//valid
-    public Article createArticle(@RequestBody Article article){return articleService.createArticle(article);}
+    public Article createArticle(@RequestBody ArticleCreateRequest req){
+        return articleService.createArticle(req);}
 
-    @PreAuthorize("has_role(ADMIN)")
+    //@PreAuthorize("hasRole(ADMIN)")
     @DeleteMapping("/{id}")//valid
     public void deleteArticle(@PathVariable Long id){
         articleService.deleteArticleById(id);
     }
 
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+   // @PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
     @PutMapping("")//valid
-    public Article updateArticle(@RequestBody Article article){
-        return articleService.updateArticle(article);
+    public Article updateArticleProvider(@RequestBody ArticleUpdateRequest articleUpdateRequest){
+        return articleService.updateArticleProvider(articleUpdateRequest);
     }
 
     @GetMapping("/{id}")//valid
@@ -66,7 +68,6 @@ private final UserRepo userRepo;
     @GetMapping("code/{code}")//valid
     public Article getArticleByCode(@PathVariable Long code){return articleService.getArticleByCode(code);}
 
-
     @GetMapping("subCategoryName/{name}")//valid
     public List<Article> getArticlesBySubCategoryName(@PathVariable String name){
         return articleService.getArticlesBySubCategoryName(name);
@@ -75,39 +76,54 @@ private final UserRepo userRepo;
     public List<Article>getArticlesRecommendationById(@PathVariable Long id){
         return articleService.getRecommendationsById(id);
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
     @PutMapping("addRecommendation/{id}")//valid
-    public List<Article>addArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
-        return articleService.addArticleRecommendation(articles,id);
+    public List<Article>addArticlesRecommendation(@PathVariable Long id,@RequestBody List<Long> articlesIds){
+        return articleService.addArticleRecommendation(articlesIds,id);
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-    @DeleteMapping("deleteRecommendation/{id}")
-    public void deleteArticlesRecommendation(@PathVariable Long id,@RequestBody List<Article> articles){
-       articleService.deleteArticleRecommendation(articles,id);
+   // @PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @PutMapping("deleteRecommendation")
+    public void deleteArticlesRecommendation(@RequestBody DeleteRecommendationRequest deleteRecommendationRequest){
+       articleService.deleteArticleRecommendation(deleteRecommendationRequest.getArticleId(), deleteRecommendationRequest.getRecommendationId());
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
     @GetMapping("insufficient/{stock}")//valid
     public List<Article> getInsufficientStockArticles(@PathVariable int stock){
         return articleService.getInsufficientStockArticles(stock);
     }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-   @GetMapping("/ArticleByUser")//valid
-   public List<Article>getArticlesByUserId(){
-       String mail  = SecurityContextHolder.getContext().getAuthentication().getName();
-       User user=userRepo.getUserByEmail(mail);
-        return articleService.getArticlesByUserId(user.getId());
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+   @GetMapping("/articleByUser/{id}")//valid
+   public List<Article>getArticlesByUserId(@PathVariable Long id){
+        User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.hasRole("ADMIN")){
+            return articleService.getArticlesByUserId(id);
+        }else{
+            return articleService.getArticlesByUserId(user.getId());
+        }
    }
-    @PreAuthorize("has_roles(ADMIN,PROVIDER)")
-    @GetMapping("insufficientByUser/{stock}")//valid
-    public  List<Article>getInsufficientArticlesByUser(@PathVariable int stock){
-        String mail  = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user=userRepo.getUserByEmail(mail);
-        return  articleService.getInsufficientStockArticlesByProvider(user,stock);
+    //@PreAuthorize("hasAnyRole(ADMIN,PROVIDER)")
+    @GetMapping("insufficientByUser/{stock}/{id}")//valid
+    public  List<Article>getInsufficientArticlesByUser(@PathVariable int stock,@PathVariable Long id){
+        User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.hasRole("ADMIN")){
+            return  articleService.getInsufficientStockArticlesByProvider(userRepo.getUserById(id),stock);
+        }else{
+            return  articleService.getInsufficientStockArticlesByProvider(user,stock);
+        }
+
     }
-    @PreAuthorize("has_roles(ADMIN)")
+    //@PreAuthorize("hasRole(ADMIN)")
     @GetMapping("userInsufficientStock/{stock}")//valid
     public List<User> getUsersInsufficientStock(@PathVariable int stock){
         return articleService.getUsersStockInsufficient(stock);
+    }
+    @GetMapping("name/{name}")
+    public List<Article> getArticlesByName(@PathVariable String name){
+        return articleService.getArticlesByName(name);
+    }
+    @GetMapping("image/{url}")
+    public Article getArticleByImage(@PathVariable String url){
+        return articleService.getArticleByImage(url);
     }
 
 }

@@ -1,40 +1,31 @@
-package com.springapp.firstapp.module;
+package com.springapp.firstapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.springapp.firstapp.module.Article;
+import com.springapp.firstapp.module.SubCategory;
+import com.springapp.firstapp.module.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Article {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ArticleCreateRequest {
+
     private Long id;
-    @Column(unique = true)
     private Long code;
-    private String name;
     private int stock;
     private int TVA;
     private String description;
     private String color;
     private int weight;
     private int price;
+    private Long subCategoryId;
+    private Long userId;
     private String url;
-
-    @ManyToOne
-    private SubCategory subCategory;
-
-    @ManyToMany
-    @JsonIgnore
-    private List<Article> articles;
-
-    @ManyToOne
-    private User user;
+    private String name;
 }

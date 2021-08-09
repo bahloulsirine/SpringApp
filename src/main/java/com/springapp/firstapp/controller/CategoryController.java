@@ -10,24 +10,25 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin (origins = "*",allowedHeaders = "*")
 @RequestMapping("api/category")
 
 @AllArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    @PreAuthorize("has_role(ADMIN)")
+   // @PreAuthorize("hasRole(ADMIN)")
     @PostMapping("")//valid
     public Category createCategory (@RequestBody Category category){
         return categoryService.createCategory(category);
     }
 
-    @PreAuthorize("has_role(ADMIN)")
+    //@PreAuthorize("hasRole(ADMIN)")
     @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         categoryService.deleteCategoryById(id);
     }
 
-    @PreAuthorize("has_role(ADMIN)")
+    @PreAuthorize("hasRole(ADMIN)")
     @PutMapping("")//valid
     public Category updateCategory (@RequestBody Category category){
         return categoryService.updateCategory(category);

@@ -1,7 +1,10 @@
 package com.springapp.firstapp.service;
 
+import com.springapp.firstapp.dto.ArticleCreateRequest;
+import com.springapp.firstapp.dto.ArticleUpdateRequest;
 import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Promotion;
+import com.springapp.firstapp.module.SubCategory;
 import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.repo.ArticleRepo;
 import com.springapp.firstapp.repo.PromotionRepo;
@@ -20,18 +23,35 @@ import java.util.Optional;
 public class ArticleService {
     private final  ArticleRepo articleRepo;
     private final  UserService userService;
-    private final PromotionRepo promotionRepo;
+    private final SubCategoryService subCategoryService;
 
     public List<Article> getAllArticles (){
         return articleRepo.findAll();
     }
 
-    public Article createArticle(Article article){
+    public Article createArticle(ArticleCreateRequest req){
+        User user = userService.getUserById(req.getUserId()).get();
+        SubCategory sub = subCategoryService.getSubCategoryById(req.getSubCategoryId()).get();
+        Article article = new Article(null,req.getCode(), req.getName(), req.getStock(), req.getTVA(), req.getDescription(), req.getColor(), req.getWeight(), req.getPrice(),req.getUrl(), sub,null,user);
         return articleRepo.save(article);
     }
 
     public void deleteArticleById(Long id){
         articleRepo.deleteById(id);
+    }
+
+    public Article updateArticleProvider(ArticleUpdateRequest articleUpdateRequest){
+
+        Article article=articleRepo.findById(articleUpdateRequest.getId()).get();
+        article.setPrice(articleUpdateRequest.getPrice());
+        article.setStock(articleUpdateRequest.getStock());
+        article.setColor(articleUpdateRequest.getColor());
+        article.setDescription(articleUpdateRequest.getDescription());
+        article.setTVA(articleUpdateRequest.getTVA());
+        article.setWeight(articleUpdateRequest.getWeight());
+        article.setName(articleUpdateRequest.getName());
+        article.setUrl(articleUpdateRequest.getUrl());
+        return articleRepo.save(article);
     }
 
     public Article updateArticle(Article article){
@@ -55,34 +75,38 @@ public class ArticleService {
     public List<Article>getRecommendationsById(Long id){
         Optional<Article> article1=getArticleById(id);
         return article1.get().getArticles();}
-    public List<Article> addArticleRecommendation(List<Article> articles,Long id){
-        Article article1=getArticleById(id).get();
+    public List<Article> addArticleRecommendation(List<Long> articlesIds,Long id){
+        Article article=getArticleById(id).get();
         List<Article> list=getRecommendationsById(id);
-        for (Article article:articles){
-        list.add(article);}
-        article1.setArticles(list);
-        articleRepo.save(article1);
+        for (Long articleId:articlesIds){
+        list.add(getArticleById(articleId).get());}
+        article.setArticles(list);
+        articleRepo.save(article);
         return list;}
-    public void deleteArticleRecommendation(List<Article> articles, Long id){
-        Article article1=getArticleById(id).get();
-        List<Long>articlesIds=new ArrayList<>();
-        for (Article article:articles){
-           articlesIds.add(article.getId());
-            }
-        articleRepo.deleteRecommendations(articlesIds);
+    public void deleteArticleRecommendation(Long articleId, Long recommendationId){
+        articleRepo.deleteRecommendations(articleId,recommendationId);
 
     }
     public List<Article> getInsufficientStockArticles(int stock){ return articleRepo.getArticlesByStockLessThan(stock);}
     public List<Article>getInsufficientStockArticlesByProvider(User user,int stock){
         return articleRepo.getArticlesByStockLessThanAndUser(stock,user);
     }
-    public List<Article>getArticlesByUserId(Long id){return articleRepo.getArticlesByUserId(id);}
+    public List<Article>getArticlesByUserId(Long id){
+
+        return articleRepo.getArticlesByUserId(id);}
     public List<User> getUsersStockInsufficient(int stock){
         List<Long> userIds =  articleRepo.getUserIdInsufficientStock(stock);
         return userService.getUsersByIdIn(userIds);
     }
 
 
-
-
+    public List<Article> getArticlesByIds(List<Long> articleIds) {
+        return articleRepo.getArticlesByIdIn(articleIds);
+    }
+public Article getArticleByImage(String url){
+        return articleRepo.getArticleByUrl(url);
+}
+public List<Article> getArticlesByName(String name){
+        return articleRepo.getArticlesByName(name);
+}
 }

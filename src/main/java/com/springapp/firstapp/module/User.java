@@ -1,5 +1,6 @@
 package com.springapp.firstapp.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -31,10 +29,10 @@ public class User implements UserDetails {
     private  String address;
     @Column(unique = true)
     private  Long cin;
+    @JsonIgnore
     @Column(nullable = false)
     private  String password;
-    private  String birthday;
-    @Column(unique = true)
+    private Date birthday;
     private  Long driverLicence;
     @Column(unique = true)
     private  String phoneNumber;
@@ -45,6 +43,7 @@ public class User implements UserDetails {
     private Boolean isEnabled;
     @ManyToOne
     private Role role;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();//list pas valeur dupliquée

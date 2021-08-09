@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,5 +22,6 @@ public class UserSignupRequest {
     private Long cin ;
     private Long driverLicence ;
     private String phoneNumber;
-
+    private  String address;
+    private Date birthday;
 }

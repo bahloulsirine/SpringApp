@@ -22,4 +22,6 @@ public interface UserRepo extends JpaRepository<User,Long> {
 @Modifying
     @Query(value = "UPDATE `user` SET `total_order` = 0 WHERE id IN (?1)", nativeQuery = true)
     void  setUsersTotalOrder(List<Long> userIds);
+
+    User getUserByCin(Long cin);
 }
