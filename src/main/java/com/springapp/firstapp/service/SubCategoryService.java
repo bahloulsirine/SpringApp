@@ -46,4 +46,7 @@ public class SubCategoryService {
     public List<SubCategory> getSubCategoriesByCategory(Category category) {
         return subCategoryRepo.getSubCategoriesByCategory(category);
     }
+    public List<SubCategory> getSubcategoryByCategoryId(Long id){
+        return subCategoryRepo.getSubCategoriesByCategoryId(id);
+    }
 }

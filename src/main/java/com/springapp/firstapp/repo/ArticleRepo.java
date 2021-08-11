@@ -25,7 +25,7 @@ public interface ArticleRepo extends JpaRepository<Article,Long> {
     List<Article> getArticlesBySubCategoryName(String name);
 
     List<Article> getArticlesByStockLessThan(int stock);
-
+    List<Article>getArticlesBySubCategoryCategory(Category category);
     List<Article> getArticlesByStockLessThanAndUser(int stock, User user);
     List<Article>getArticlesByUserId(Long id);
     List<Article> getArticlesByIdIn(List<Long> ids);

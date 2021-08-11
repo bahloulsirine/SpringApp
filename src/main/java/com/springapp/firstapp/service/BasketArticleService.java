@@ -5,12 +5,15 @@ import com.springapp.firstapp.dto.OrderItemRequest;
 import com.springapp.firstapp.module.Article;
 import com.springapp.firstapp.module.Basket;
 import com.springapp.firstapp.module.BasketArticle;
+import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.repo.BasketArticleRepo;
 import com.springapp.firstapp.repo.BasketRepo;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,7 +41,7 @@ public class BasketArticleService {
         return  basketArticleRepo.save(basketArticle);
 
     }
-        public  int getPrice(List< BasketArticle > basketArticles) {
+        public  int getPrice(List<BasketArticle> basketArticles) {
             int price=0;
             for (BasketArticle basketArticle: basketArticles){
                 Long id=basketArticle.getArticle().getId();
@@ -59,5 +62,26 @@ public class BasketArticleService {
     }
     public List<BasketArticle>getBasketArticlesByBasketId(Long id){
         return basketArticleRepo.getBasketArticlesByBasketId(id);
+    }
+
+    public BasketArticle createBasketArticle(int amount, Long id,User user) {
+
+        Article article=articleService.getArticleById(id).get();
+        Basket basket=basketService.getBasketByUser(user);
+        List<BasketArticle> basketArticles=getArticlesByBasketId(basket.getId());
+
+        for (BasketArticle basketArticle:basketArticles){
+            if(basketArticle.getArticle()==article){
+                BasketArticleRequest basketArticleRequest=new BasketArticleRequest(basketArticle.getId(),basketArticle.getAmount()+amount);
+                return update(basketArticleRequest);
+            }
+        }
+
+        BasketArticle basketArticle=new BasketArticle(null,amount,basket,article);
+        basketArticleRepo.save(basketArticle);
+        List<BasketArticle> basketArticlesUpdating=getArticlesByBasketId(basket.getId());
+        basket.setPricesSum(getPrice(basketArticlesUpdating));
+        basketService.updateBasket(basket);
+        return  basketArticle;
     }
 }

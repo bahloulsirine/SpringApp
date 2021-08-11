@@ -1,14 +1,19 @@
 package com.springapp.firstapp.service;
 import com.springapp.firstapp.module.Article;
+import com.springapp.firstapp.module.Promotion;
 import com.springapp.firstapp.module.PromotionFlush;
+import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.repo.PromotionFlushRepo;
 import lombok.AllArgsConstructor;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -64,5 +69,57 @@ public class PromotionFlushService {
             promotionArticles.add(article);
         }
         return promotionFlushRepo.save(promotionFlush);
+    }
+
+    public Set<PromotionFlush> getPromotionProvider(Long id) {
+        List<Article> articles = articleService.getArticlesByUserId(id);
+        return promotionFlushRepo.getPromotionFlushesByArticlesIn(articles);
+
+    }
+
+    public List<Article> getPromotionArticlesProvider(Long promotionId) {
+        PromotionFlush promotionFlush=getPromotionById(promotionId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Set<PromotionFlush> promotions = getPromotionProvider(user.getId());
+        if (promotions.contains(promotionFlush)) {
+            List<Article> articles = new ArrayList<>();
+            List<Article> promotionArticles = promotionFlush.getArticles();
+            List<Article> providerArticles=articleService.getArticlesByUserId(user.getId());
+            for (Article article : promotionArticles) {
+                if (providerArticles.contains(article)) {
+                    articles.add(article);
+
+                }
+            }
+            return articles;
+        } else {
+            return null;
+        }
+
+    }
+    public List<Article> getArticlesToPromotion(){
+        List<Article>articles=new ArrayList<>();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(user.hasRole("ADMIN")){
+            articles=articleService.getAllArticles();
+        }else{
+            articles=articleService.getArticlesByUserId(user.getId());
+        }
+        List<Article>promotionArticles=new ArrayList<>();
+        List<PromotionFlush>promotions=getPromotionFlush();
+        for (PromotionFlush promotionFlush:promotions){
+            for (Article article:promotionFlush.getArticles()){
+                promotionArticles.add(article);
+            }
+        }
+        List<Article>articleNoPromotion=new ArrayList<>();
+        for (Article article:articles){
+            if (!promotionArticles.contains(article)){
+                articleNoPromotion.add(article);
+            }
+        }
+        return articleNoPromotion;
+
     }
 }

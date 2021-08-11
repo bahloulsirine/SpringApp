@@ -23,11 +23,16 @@ public class BasketController {
 private final BasketService basketService;
 private final UserRepo userRepo;
 private final BasketRepo basketRepo;
-@PostMapping("")//valid
-    public Basket createBasket(@RequestBody BasketRequest basketRequest){
+//@PostMapping("")//valid
+//    public Basket createBasket(@RequestBody BasketRequest basketRequest){
+//    User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    System.out.println(user);
+//    return basketService.createBasket(basketRequest,user);
+//}
+@PostMapping("/createBasket")//valid
+public Basket createBasket(){
     User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    System.out.println(user);
-    return basketService.createBasket(basketRequest,user);
+    return basketService.createBasket(user);
 }
 @DeleteMapping("")//valid
     public void deleteBasket(){

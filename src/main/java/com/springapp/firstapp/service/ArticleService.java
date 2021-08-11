@@ -24,6 +24,7 @@ public class ArticleService {
     private final  ArticleRepo articleRepo;
     private final  UserService userService;
     private final SubCategoryService subCategoryService;
+    private final CategoryService categoryService;
 
     public List<Article> getAllArticles (){
         return articleRepo.findAll();
@@ -108,5 +109,9 @@ public Article getArticleByImage(String url){
 }
 public List<Article> getArticlesByName(String name){
         return articleRepo.getArticlesByName(name);
+}
+public List<Article> getArticlesByCategoryId(Long id){
+
+        return  articleRepo.getArticlesBySubCategoryCategory(categoryService.getCategoryById(id).get());
 }
 }

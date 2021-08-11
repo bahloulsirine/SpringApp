@@ -16,27 +16,27 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-   // @PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")//valid
     public Category createCategory (@RequestBody Category category){
         return categoryService.createCategory(category);
     }
 
-    //@PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")//valid
     public void deleteCategory(@PathVariable Long id){
         categoryService.deleteCategoryById(id);
     }
 
-    @PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("")//valid
     public Category updateCategory (@RequestBody Category category){
         return categoryService.updateCategory(category);
     }
 
     @GetMapping("/{id}")//valid
-    public Optional<Category> getCategoryById(@PathVariable Long id){
-        return categoryService.getCategoryById(id);
+    public Category getCategoryById(@PathVariable Long id){
+        return categoryService.getCategoryById(id).get();
     }
 
     @GetMapping("")//valid

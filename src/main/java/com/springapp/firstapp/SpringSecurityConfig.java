@@ -40,9 +40,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                  http.cors().and().csrf().disable()
                 .authorizeRequests()
                          .antMatchers("/api/auth/**").permitAll()
-                         .antMatchers("/api/user/**").permitAll()
                          .antMatchers("/api/basket/**").permitAll()
                          .antMatchers("/api/basketArticle/**").permitAll()
+
 
                          .anyRequest().authenticated().and().sessionManagement()
                          .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//ne sauvegarde pas session

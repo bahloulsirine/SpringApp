@@ -21,12 +21,12 @@ import java.util.Optional;
 public class SubCategoryController {
     private final SubCategoryService subCategoryService;
     private final CategoryRepo categoryRepo;
-    //@PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")//valid
     public SubCategory createSubCategory(@RequestBody SubcategoryCreateRequest subCategory){
         return subCategoryService.createSubcategory(subCategory);
     }
-    //@PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")//valid
     public void deleteSubcategory(@PathVariable Long id){
         subCategoryService.deleteSubCategoryById(id);
@@ -56,5 +56,9 @@ public class SubCategoryController {
     @GetMapping("/category/{category}")//valid
     public  List<SubCategory> getSubCategoriesByCategory(@PathVariable String category){
         return subCategoryService.getSubCategoriesByCategory(categoryRepo.getCategoryByName(category));
+    }
+    @GetMapping("/categoryId/{id}")//valid
+    public  List<SubCategory> getSubCategoriesByCategoryId(@PathVariable Long id){
+        return subCategoryService.getSubcategoryByCategoryId(id);
     }
 }

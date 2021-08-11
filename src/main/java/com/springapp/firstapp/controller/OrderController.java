@@ -35,14 +35,14 @@ public CustomerOrder createOrder(@RequestBody String modeOfPayment) {
     return orderService.createOrder(modeOfPayment, user);
 }
 
-    // @PreAuthorize("hasRole(USER)")
+    
     @DeleteMapping("/{id}")//valid
     public void deleteOrderById(@PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         orderService.deleteOrderById(id, user);
     }
 
-    //    @PreAuthorize("hasAnyRole(ADMIN,PROVIDER,DELIVERY)")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")//valid
     public List<CustomerOrder> getAllOrder() {
         return orderService.getAllOrders();
@@ -81,7 +81,7 @@ public CustomerOrder createOrder(@RequestBody String modeOfPayment) {
     }
 
 
-    //    @PreAuthorize("hasRole(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("validateOrder/{id}/{state}")//valid
     public CustomerOrder ValidateOrder(@PathVariable Long id, @PathVariable boolean state) {
         if (state) {

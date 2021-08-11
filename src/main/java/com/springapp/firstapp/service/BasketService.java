@@ -31,14 +31,18 @@ public class BasketService {
         basketRepo.save(basket);
     }
 
-    public Basket createBasket(BasketRequest basketRequest,User user){
-        Basket basket=new Basket(null,0,user);
-        basket=basketRepo.save(basket);
-        List<OrderItemRequest> orderItemRequests=basketRequest.getOrderItems();
-        int price = getPrice(orderItemRequests,basket);
-        basket.setPricesSum(price);
-        return basketRepo.save(basket);
-    }
+//    public Basket createBasket(BasketRequest basketRequest,User user){
+//        Basket basket=new Basket(null,0,user);
+//        basket=basketRepo.save(basket);
+//        List<OrderItemRequest> orderItemRequests=basketRequest.getOrderItems();
+//        int price = getPrice(orderItemRequests,basket);
+//        basket.setPricesSum(price);
+//        return basketRepo.save(basket);
+//    }
+public Basket createBasket(User user){
+    Basket basket=new Basket(null,0,user);
+    return basketRepo.save(basket);
+}
     private int getPrice(List<OrderItemRequest> orderItemRequests,Basket basket) {
         int price=0;
         for (OrderItemRequest orderItemRequest: orderItemRequests){
