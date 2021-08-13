@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,8 +31,18 @@ public class PromotionService {
 
     public Promotion createPromotionArticles(List<Long> articleIds, Integer percentage) {
         List<Article> articles = articleService.getArticlesByIds(articleIds);
-        Promotion promotion = new Promotion(null, percentage, articles);
-        return promotionRepo.save(promotion);
+        Promotion promotion=promotionRepo.getPromotionByPercentagePromotion(percentage);
+        if(promotion==null){
+            Promotion newPromotion = new Promotion(null, percentage, articles);
+            return promotionRepo.save(newPromotion);
+        }else{
+            List<Article>promotionArticles=promotion.getArticles();
+            for(Article article:articles){
+               promotionArticles.add(article);
+            }
+            promotion.setArticles(promotionArticles);
+            return promotionRepo.save(promotion);
+        }
     }
 
     public void deletePromotionArticlesByPercentage(Integer promotion) {
@@ -86,11 +97,12 @@ public class PromotionService {
             List<Article> articles = new ArrayList<>();
             List<Article> promotionArticles = getPromotionArticles(percentage);
             List<Article> providerArticles=articleService.getArticlesByUserId(user.getId());
-            for (Article article : promotionArticles) {
-                if (providerArticles.contains(article)) {
-                    articles.add(article);
-                }
-            }
+            articles = promotionArticles.stream().filter(providerArticles::contains).collect(Collectors.toList());
+//            for (Article article : promotionArticles) {
+//                if (providerArticles.contains(article)) {
+//                    articles.add(article);
+//                }
+//            }
             return articles;
         } else {
             return null;

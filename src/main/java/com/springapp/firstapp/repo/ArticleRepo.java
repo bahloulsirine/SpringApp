@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepo extends JpaRepository<Article,Long> {
-
+    Article findByIdAndUserId(Long articleId,Long UserId);
     List<Article> getArticlesBySubCategoryId(Long id);
 
     List<Article> getArticlesByColor(String color);

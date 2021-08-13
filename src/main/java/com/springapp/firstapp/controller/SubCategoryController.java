@@ -1,5 +1,6 @@
 package com.springapp.firstapp.controller;
 
+import com.springapp.firstapp.dto.CategoryRequest;
 import com.springapp.firstapp.dto.SubcategoryCreateRequest;
 import com.springapp.firstapp.module.Category;
 import com.springapp.firstapp.module.SubCategory;
@@ -60,5 +61,9 @@ public class SubCategoryController {
     @GetMapping("/categoryId/{id}")//valid
     public  List<SubCategory> getSubCategoriesByCategoryId(@PathVariable Long id){
         return subCategoryService.getSubcategoryByCategoryId(id);
+    }
+    @GetMapping("categoryRequest")
+    public List<CategoryRequest> getCategoryRequest(){
+        return subCategoryService.getCategoryRequest();
     }
 }

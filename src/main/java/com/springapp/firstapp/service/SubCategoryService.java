@@ -1,5 +1,6 @@
 package com.springapp.firstapp.service;
 
+import com.springapp.firstapp.dto.CategoryRequest;
 import com.springapp.firstapp.dto.SubcategoryCreateRequest;
 import com.springapp.firstapp.module.Category;
 import com.springapp.firstapp.module.SubCategory;
@@ -8,6 +9,7 @@ import com.springapp.firstapp.repo.SubCategoryRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,5 +50,15 @@ public class SubCategoryService {
     }
     public List<SubCategory> getSubcategoryByCategoryId(Long id){
         return subCategoryRepo.getSubCategoriesByCategoryId(id);
+    }
+    public List<CategoryRequest> getCategoryRequest(){
+        List<Category>categories=categoryService.getAllCategory();
+        List<CategoryRequest>categoryRequests=new ArrayList<>();
+        for (Category category:categories){
+            List<SubCategory>subCategories=getSubCategoriesByCategory(category);
+            CategoryRequest categoryRequest=new CategoryRequest(category,subCategories);
+            categoryRequests.add(categoryRequest);
+        }
+        return categoryRequests;
     }
 }

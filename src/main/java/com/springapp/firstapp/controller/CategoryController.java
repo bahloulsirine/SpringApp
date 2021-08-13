@@ -1,5 +1,6 @@
 package com.springapp.firstapp.controller;
 
+import com.springapp.firstapp.dto.CategoryRequest;
 import com.springapp.firstapp.module.Category;
 import com.springapp.firstapp.service.CategoryService;
 import lombok.AllArgsConstructor;
@@ -47,5 +48,6 @@ public class CategoryController {
         public Category getCategoryByName(@PathVariable String name){
         return categoryService.getCategoryByName(name);
     }
+
 
 }

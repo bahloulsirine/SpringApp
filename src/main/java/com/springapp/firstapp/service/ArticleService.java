@@ -9,6 +9,7 @@ import com.springapp.firstapp.module.User;
 import com.springapp.firstapp.repo.ArticleRepo;
 import com.springapp.firstapp.repo.PromotionRepo;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -41,18 +42,18 @@ public class ArticleService {
         articleRepo.deleteById(id);
     }
 
-    public Article updateArticleProvider(ArticleUpdateRequest articleUpdateRequest){
+    public Article updateArticleProvider(ArticleUpdateRequest articleUpdateRequest,Long articleId){
+        Article article=getArticleById(articleId).get();
+            article.setPrice(articleUpdateRequest.getPrice());
+            article.setStock(articleUpdateRequest.getStock());
+            article.setColor(articleUpdateRequest.getColor());
+            article.setDescription(articleUpdateRequest.getDescription());
+            article.setTVA(articleUpdateRequest.getTVA());
+            article.setWeight(articleUpdateRequest.getWeight());
+            article.setName(articleUpdateRequest.getName());
+            article.setUrl(articleUpdateRequest.getUrl());
+            return articleRepo.save(article);
 
-        Article article=articleRepo.findById(articleUpdateRequest.getId()).get();
-        article.setPrice(articleUpdateRequest.getPrice());
-        article.setStock(articleUpdateRequest.getStock());
-        article.setColor(articleUpdateRequest.getColor());
-        article.setDescription(articleUpdateRequest.getDescription());
-        article.setTVA(articleUpdateRequest.getTVA());
-        article.setWeight(articleUpdateRequest.getWeight());
-        article.setName(articleUpdateRequest.getName());
-        article.setUrl(articleUpdateRequest.getUrl());
-        return articleRepo.save(article);
     }
 
     public Article updateArticle(Article article){
@@ -114,4 +115,11 @@ public List<Article> getArticlesByCategoryId(Long id){
 
         return  articleRepo.getArticlesBySubCategoryCategory(categoryService.getCategoryById(id).get());
 }
+
+    public Article getArticleToUpdate(Long id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user.hasRole("PROVIDER")){
+        return articleRepo.findByIdAndUserId(id,user.getId());}
+        return articleRepo.findById(id).get();
+    }
 }

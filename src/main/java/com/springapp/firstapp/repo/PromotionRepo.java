@@ -15,4 +15,5 @@ public interface PromotionRepo extends JpaRepository<Promotion,Long> {
     Set<Promotion> getPromotionsByArticlesIn(List<Article> articles);
 
 
+
 }
